@@ -1,13 +1,25 @@
+// Load jobs from localStorage or start with an empty array
 let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
 
+// Get references to DOM elements
 const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
 const search = document.getElementById("search");
 
+const companyInput = document.getElementById("company");
+const roleInput = document.getElementById("role");
+const statusInput = document.getElementById("status");
+const deadlineInput = document.getElementById("deadline");
+
+// Track whether we are editing an existing job
+let editIndex = null;
+
+// Save jobs to localStorage
 function saveJobs() {
   localStorage.setItem("jobs", JSON.stringify(jobs));
 }
 
+// Render jobs in the table, with optional search filter
 function renderJobs(filter = "") {
   jobList.innerHTML = "";
 
@@ -31,41 +43,54 @@ function renderJobs(filter = "") {
     });
 }
 
+// Handle form submission (add or update job)
 form.addEventListener("submit", e => {
   e.preventDefault();
 
   const job = {
-    company: company.value,
-    role: role.value,
-    status: status.value,
-    deadline: deadline.value
+    company: companyInput.value,
+    role: roleInput.value,
+    status: statusInput.value,
+    deadline: deadlineInput.value
   };
 
-  jobs.push(job);
+  if (editIndex !== null) {
+    // Update existing job
+    jobs[editIndex] = job;
+    editIndex = null; // Reset edit mode
+  } else {
+    // Add new job
+    jobs.push(job);
+  }
+
   saveJobs();
   renderJobs();
   form.reset();
 });
 
+// Delete a job
 function deleteJob(index) {
   jobs.splice(index, 1);
   saveJobs();
   renderJobs();
 }
 
+// Edit a job (populate form fields and set edit mode)
 function editJob(index) {
   const job = jobs[index];
 
-  company.value = job.company;
-  role.value = job.role;
-  status.value = job.status;
-  deadline.value = job.deadline;
+  companyInput.value = job.company;
+  roleInput.value = job.role;
+  statusInput.value = job.status;
+  deadlineInput.value = job.deadline;
 
-  deleteJob(index);
+  editIndex = index; // Mark which job is being edited
 }
 
+// Search jobs by company name
 search.addEventListener("input", () => {
   renderJobs(search.value);
 });
 
+// Initial render
 renderJobs();
