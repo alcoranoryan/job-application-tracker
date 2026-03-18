@@ -169,8 +169,8 @@ function toggleFilter(event, key) {
 
   // Position menu near the clicked button
   const rect = event.target.getBoundingClientRect();
-  menu.style.left = rect.left + "px";
-  menu.style.top = rect.bottom + "px";
+  menu.style.left = rect.left + window.scrollX + "px";
+  menu.style.top = rect.bottom + window.scrollY + "px";
   menu.style.display = "block";
 }
 
