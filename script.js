@@ -12,6 +12,9 @@ const deadlineInput = document.getElementById("deadline");
 let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
 
+// Track active filters for each column
+let activeFilters = { company: [], role: [], status: [], deadline: [] };
+
 function saveJobs() {
   localStorage.setItem("jobs", JSON.stringify(jobs));
 }
@@ -23,6 +26,14 @@ function renderJobs(filter = "") {
     job.company.toLowerCase().includes(filter.toLowerCase())
   );
 
+  // Apply column filters
+  Object.keys(activeFilters).forEach(key => {
+    if (activeFilters[key].length > 0) {
+      filteredJobs = filteredJobs.filter(job => activeFilters[key].includes(job[key]));
+    }
+  });
+
+  // Apply sorting
   if (sortConfig.key) {
     filteredJobs.sort((a, b) => {
       let valA = a[sortConfig.key];
@@ -108,15 +119,92 @@ function updateHeaderIndicators() {
   const headers = document.querySelectorAll("th.sortable");
   headers.forEach(header => {
     const key = header.dataset.key;
+    let arrow = "⇅";
     if (sortConfig.key === key) {
-      header.textContent =
-        header.dataset.label +
-        (sortConfig.direction === "asc" ? " ↑" : " ↓");
-    } else {
-      header.textContent = header.dataset.label + " ⇅";
+      arrow = sortConfig.direction === "asc" ? " ↑" : " ↓";
     }
+    header.innerHTML = `
+      ${header.dataset.label} ${arrow}
+      <button class="filter-btn" onclick="toggleFilter(event, '${key}')">▼</button>
+    `;
   });
 }
+
+// Show filter dropdown
+function toggleFilter(event, key) {
+  event.stopPropagation();
+  const menu = document.getElementById("filterMenu");
+  menu.innerHTML = "";
+
+  // Get unique values for this column
+  const values = [...new Set(jobs.map(job => job[key]))];
+
+  // Add Select All checkbox
+  const allChecked =
+    activeFilters[key].length === 0 ||
+    activeFilters[key].length === values.length;
+
+  menu.innerHTML += `
+    <label>
+      <input type="checkbox" id="selectAll-${key}" ${allChecked ? "checked" : ""} onchange="toggleSelectAll('${key}')">
+      (Select All)
+    </label>
+  `;
+
+  values.forEach(val => {
+    const checked = activeFilters[key].length === 0 || activeFilters[key].includes(val);
+    menu.innerHTML += `
+      <label>
+        <input type="checkbox" value="${val}" ${checked ? "checked" : ""}>
+        ${val}
+      </label>
+    `;
+  });
+
+  // Add Apply and Clear Filter buttons
+  menu.innerHTML += `
+    <button onclick="applyFilter('${key}')">Apply</button>
+    <button onclick="clearFilter('${key}')">Clear Filter</button>
+  `;
+
+  // Position menu near the clicked button
+  const rect = event.target.getBoundingClientRect();
+  menu.style.left = rect.left + "px";
+  menu.style.top = rect.bottom + "px";
+  menu.style.display = "block";
+}
+
+function toggleSelectAll(key) {
+  const menu = document.getElementById("filterMenu");
+  const selectAll = document.getElementById(`selectAll-${key}`);
+  const checkboxes = menu.querySelectorAll("input[type='checkbox'][value]");
+
+  checkboxes.forEach(cb => {
+    cb.checked = selectAll.checked;
+  });
+}
+
+function applyFilter(key) {
+  const menu = document.getElementById("filterMenu");
+  const checkboxes = menu.querySelectorAll("input[type='checkbox'][value]");
+  activeFilters[key] = Array.from(checkboxes)
+    .filter(cb => cb.checked)
+    .map(cb => cb.value);
+
+  menu.style.display = "none";
+  renderJobs(search.value);
+}
+
+function clearFilter(key) {
+  activeFilters[key] = []; // Reset filter for this column
+  document.getElementById("filterMenu").style.display = "none";
+  renderJobs(search.value);
+}
+
+// Close filter menu when clicking outside
+document.addEventListener("click", () => {
+  document.getElementById("filterMenu").style.display = "none";
+});
 
 search.addEventListener("input", () => {
   renderJobs(search.value);

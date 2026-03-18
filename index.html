@@ -29,15 +29,26 @@
 <table>
   <thead>
     <tr>
-      <th class="sortable" data-key="company" data-label="Company" onclick="sortTable('company')">Company ⇅</th>
-      <th class="sortable" data-key="role" data-label="Role" onclick="sortTable('role')">Role ⇅</th>
-      <th class="sortable" data-key="status" data-label="Status" onclick="sortTable('status')">Status ⇅</th>
-      <th class="sortable" data-key="deadline" data-label="Deadline" onclick="sortTable('deadline')">Deadline ⇅</th>
+      <th class="sortable" data-key="company" data-label="Company" onclick="sortTable('company')">
+        Company ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'company')">▼</button>
+      </th>
+      <th class="sortable" data-key="role" data-label="Role" onclick="sortTable('role')">
+        Role ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'role')">▼</button>
+      </th>
+      <th class="sortable" data-key="status" data-label="Status" onclick="sortTable('status')">
+        Status ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'status')">▼</button>
+      </th>
+      <th class="sortable" data-key="deadline" data-label="Deadline" onclick="sortTable('deadline')">
+        Deadline ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'deadline')">▼</button>
+      </th>
       <th>Actions</th>
     </tr>
   </thead>
   <tbody id="jobList"></tbody>
 </table>
+
+<!-- Container for filter dropdowns -->
+<div id="filterMenu" class="filter-menu"></div>
 
 <script src="script.js"></script>
 </body>
