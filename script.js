@@ -206,8 +206,43 @@ document.addEventListener("click", () => {
   document.getElementById("filterMenu").style.display = "none";
 });
 
+  //for Autocomplete + Incremental + Live Search
 search.addEventListener("input", () => {
-  renderJobs(search.value);
+  const query = search.value.toLowerCase();
+
+  // Live search (real-time filtering)
+  renderJobs(query);
+
+  // Build suggestions (autocomplete/typeahead)
+  const suggestionsBox = document.getElementById("suggestions");
+  suggestionsBox.innerHTML = "";
+
+  if (query.length > 0) {
+    // Collect unique matches from company, role, status
+    const matches = [
+      ...new Set(
+        jobs
+          .map(job => [job.company, job.role, job.status])
+          .flat()
+          .filter(val => val.toLowerCase().includes(query))
+      )
+    ];
+
+    matches.forEach(match => {
+      const div = document.createElement("div");
+      div.textContent = match;
+      div.onclick = () => {
+        search.value = match;
+        suggestionsBox.style.display = "none";
+        renderJobs(match.toLowerCase());
+      };
+      suggestionsBox.appendChild(div);
+    });
+
+    suggestionsBox.style.display = matches.length ? "block" : "none";
+  } else {
+    suggestionsBox.style.display = "none";
+  }
 });
 
 renderJobs();

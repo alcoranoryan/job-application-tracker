@@ -128,6 +128,27 @@ td button {
   cursor: pointer;
 }
 
+.suggestions {
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background: #fff;
+  max-height: 150px;
+  overflow-y: auto;
+  position: absolute;
+  width: 98.5%;
+  display: none;
+  z-index: 1000;
+}
+
+.suggestions div {
+  padding: 8px;
+  cursor: pointer;
+}
+
+.suggestions div:hover {
+  background-color: #E8E8E8; /* Platinum */
+}
+
 td button:first-child {
   background-color: #A2B2A7; /* Soft Sage for Edit */
 }

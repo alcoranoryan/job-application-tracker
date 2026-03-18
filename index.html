@@ -24,7 +24,11 @@
   <button type="submit">Add Job</button>
 </form>
 
-<input type="text" id="search" placeholder="Search...">
+<!-- Search bar with autocomplete/typeahead suggestions -->
+<div style="position: relative; width: 100%;">
+  <input type="text" id="search" placeholder="Search...">
+  <div id="suggestions" class="suggestions"></div>
+</div>
 
 <table>
   <thead>
