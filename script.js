@@ -22,8 +22,11 @@ function saveJobs() {
 function renderJobs(filter = "") {
   jobList.innerHTML = "";
 
+  // Expanded search: company, role, status
   let filteredJobs = jobs.filter(job =>
-    job.company.toLowerCase().includes(filter.toLowerCase())
+    job.company.toLowerCase().includes(filter.toLowerCase()) ||
+    job.role.toLowerCase().includes(filter.toLowerCase()) ||
+    job.status.toLowerCase().includes(filter.toLowerCase())
   );
 
   // Apply column filters
@@ -171,17 +174,8 @@ function toggleFilter(event, key) {
   const rect = event.target.getBoundingClientRect();
   menu.style.left = rect.left + window.scrollX + "px";
   menu.style.top = rect.bottom + window.scrollY + "px";
+
   menu.style.display = "block";
-}
-
-function toggleSelectAll(key) {
-  const menu = document.getElementById("filterMenu");
-  const selectAll = document.getElementById(`selectAll-${key}`);
-  const checkboxes = menu.querySelectorAll("input[type='checkbox'][value]");
-
-  checkboxes.forEach(cb => {
-    cb.checked = selectAll.checked;
-  });
 }
 
 function applyFilter(key) {
@@ -197,8 +191,20 @@ function applyFilter(key) {
 
 function clearFilter(key) {
   activeFilters[key] = []; // Reset filter for this column
-  document.getElementById("filterMenu").style.display = "none";
+  const menu = document.getElementById("filterMenu");
+  const checkboxes = menu.querySelectorAll("input[type='checkbox']");
+  checkboxes.forEach(cb => cb.checked = false); // visually uncheck all
+  menu.style.display = "none";
   renderJobs(search.value);
+}
+
+function toggleSelectAll(key) {
+  const menu = document.getElementById("filterMenu");
+  const selectAll = document.getElementById(`selectAll-${key}`);
+  const checkboxes = menu.querySelectorAll("input[type='checkbox'][value]");
+  checkboxes.forEach(cb => {
+    cb.checked = selectAll.checked;
+  });
 }
 
 // Close filter menu when clicking outside
@@ -206,7 +212,12 @@ document.addEventListener("click", () => {
   document.getElementById("filterMenu").style.display = "none";
 });
 
-  //for Autocomplete + Incremental + Live Search
+// Prevent closing when clicking inside the filter menu
+document.getElementById("filterMenu").addEventListener("click", (event) => {
+  event.stopPropagation();
+});
+
+// Autocomplete + Incremental + Live Search
 search.addEventListener("input", () => {
   const query = search.value.toLowerCase();
 

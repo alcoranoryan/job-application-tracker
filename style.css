@@ -31,6 +31,34 @@ form input, form select, button {
   font-size: 14px;
 }
 
+.filter-menu {
+  position: absolute;
+  background: #FFFFFF;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  display: none;
+  z-index: 99999;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.filter-menu label {
+  display: block;
+  margin: 4px 0;
+  font-size: 14px;
+}
+
+.filter-menu button {
+  margin-top: 8px;
+  padding: 6px 10px;
+  background-color: #77877A; /* Reseda Creme */
+  color: #F6F4F3; /* White Smoke */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 /* Buttons */
 button {
   background-color: #77877A; /* Reseda Creme accent */
@@ -55,33 +83,8 @@ button:hover {
   border-radius: 6px;
 }
 
-.filter-menu {
-  position: absolute;
-  background: #FFFFFF;
-  border: 1px solid #ccc;
-  border-radius: 6px;
-  padding: 10px;
-  display: none;
-  z-index: 1000;
-  max-height: 200px;
-  overflow-y: auto;
-}
 
-.filter-menu label {
-  display: block;
-  margin: 4px 0;
-  font-size: 14px;
-}
 
-.filter-menu button {
-  margin-top: 8px;
-  padding: 6px 10px;
-  background-color: #77877A; /* Reseda Creme */
-  color: #F6F4F3; /* White Smoke */
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-}
 /* Table styling */
 table {
   width: 100%;
