@@ -1,4 +1,4 @@
-let jobs = JSON.parse(localStorage.getItem("jobs")) || [];
+let jobs = [];
 
 const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
@@ -15,14 +15,46 @@ let sortConfig = { key: null, direction: "asc" };
 // Track active filters for each column
 let activeFilters = { company: [], role: [], status: [], deadline: [] };
 
-function saveJobs() {
-  localStorage.setItem("jobs", JSON.stringify(jobs));
+// ---------------- API CALLS ----------------
+
+// Fetch jobs from backend
+async function fetchJobs() {
+  const res = await fetch("http://localhost:3000/jobs");
+  jobs = await res.json();
+  renderJobs(search.value);
 }
+
+// Add new job
+async function addJob(job) {
+  await fetch("http://localhost:3000/jobs", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(job)
+  });
+  fetchJobs();
+}
+
+// Delete job
+async function deleteJob(id) {
+  await fetch(`http://localhost:3000/jobs/${id}`, { method: "DELETE" });
+  fetchJobs();
+}
+
+// Update job
+async function updateJob(id, job) {
+  await fetch(`http://localhost:3000/jobs/${id}`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(job)
+  });
+  fetchJobs();
+}
+
+// ---------------- RENDERING ----------------
 
 function renderJobs(filter = "") {
   jobList.innerHTML = "";
 
-  // Expanded search: company, role, status
   let filteredJobs = jobs.filter(job =>
     job.company.toLowerCase().includes(filter.toLowerCase()) ||
     job.role.toLowerCase().includes(filter.toLowerCase()) ||
@@ -53,7 +85,7 @@ function renderJobs(filter = "") {
     });
   }
 
-  filteredJobs.forEach((job, index) => {
+  filteredJobs.forEach(job => {
     jobList.innerHTML += `
       <tr>
         <td>${job.company}</td>
@@ -61,8 +93,8 @@ function renderJobs(filter = "") {
         <td>${job.status}</td>
         <td>${job.deadline}</td>
         <td>
-          <button onclick="editJob(${index})">Edit</button>
-          <button onclick="deleteJob(${index})">Delete</button>
+          <button onclick="editJob(${job.id})">Edit</button>
+          <button onclick="deleteJob(${job.id})">Delete</button>
         </td>
       </tr>
     `;
@@ -70,6 +102,8 @@ function renderJobs(filter = "") {
 
   updateHeaderIndicators();
 }
+
+// ---------------- FORM HANDLING ----------------
 
 form.addEventListener("submit", e => {
   e.preventDefault();
@@ -82,31 +116,25 @@ form.addEventListener("submit", e => {
   };
 
   if (editIndex !== null) {
-    jobs[editIndex] = job;
+    updateJob(editIndex, job);
     editIndex = null;
   } else {
-    jobs.push(job);
+    addJob(job);
   }
 
-  saveJobs();
-  renderJobs();
   form.reset();
 });
 
-function deleteJob(index) {
-  jobs.splice(index, 1);
-  saveJobs();
-  renderJobs();
-}
-
-function editJob(index) {
-  const job = jobs[index];
+function editJob(id) {
+  const job = jobs.find(j => j.id === id);
   companyInput.value = job.company;
   roleInput.value = job.role;
   statusInput.value = job.status;
   deadlineInput.value = job.deadline;
-  editIndex = index;
+  editIndex = id;
 }
+
+// ---------------- SORTING ----------------
 
 function sortTable(key) {
   if (sortConfig.key === key) {
@@ -133,16 +161,15 @@ function updateHeaderIndicators() {
   });
 }
 
-// Show filter dropdown
+// ---------------- FILTERING ----------------
+
 function toggleFilter(event, key) {
   event.stopPropagation();
   const menu = document.getElementById("filterMenu");
   menu.innerHTML = "";
 
-  // Get unique values for this column
   const values = [...new Set(jobs.map(job => job[key]))];
 
-  // Add Select All checkbox
   const allChecked =
     activeFilters[key].length === 0 ||
     activeFilters[key].length === values.length;
@@ -164,17 +191,14 @@ function toggleFilter(event, key) {
     `;
   });
 
-  // Add Apply and Clear Filter buttons
   menu.innerHTML += `
     <button onclick="applyFilter('${key}')">Apply</button>
     <button onclick="clearFilter('${key}')">Clear Filter</button>
   `;
 
-  // Position menu near the clicked button
   const rect = event.target.getBoundingClientRect();
   menu.style.left = rect.left + window.scrollX + "px";
   menu.style.top = rect.bottom + window.scrollY + "px";
-
   menu.style.display = "block";
 }
 
@@ -190,10 +214,10 @@ function applyFilter(key) {
 }
 
 function clearFilter(key) {
-  activeFilters[key] = []; // Reset filter for this column
+  activeFilters[key] = [];
   const menu = document.getElementById("filterMenu");
   const checkboxes = menu.querySelectorAll("input[type='checkbox']");
-  checkboxes.forEach(cb => cb.checked = false); // visually uncheck all
+  checkboxes.forEach(cb => cb.checked = false);
   menu.style.display = "none";
   renderJobs(search.value);
 }
@@ -207,29 +231,26 @@ function toggleSelectAll(key) {
   });
 }
 
+// Prevent closing when clicking inside menu
+document.getElementById("filterMenu").addEventListener("click", (event) => {
+  event.stopPropagation();
+});
+
 // Close filter menu when clicking outside
 document.addEventListener("click", () => {
   document.getElementById("filterMenu").style.display = "none";
 });
 
-// Prevent closing when clicking inside the filter menu
-document.getElementById("filterMenu").addEventListener("click", (event) => {
-  event.stopPropagation();
-});
+// ---------------- SEARCH ----------------
 
-// Autocomplete + Incremental + Live Search
 search.addEventListener("input", () => {
   const query = search.value.toLowerCase();
-
-  // Live search (real-time filtering)
   renderJobs(query);
 
-  // Build suggestions (autocomplete/typeahead)
   const suggestionsBox = document.getElementById("suggestions");
   suggestionsBox.innerHTML = "";
 
   if (query.length > 0) {
-    // Collect unique matches from company, role, status
     const matches = [
       ...new Set(
         jobs
@@ -256,4 +277,5 @@ search.addEventListener("input", () => {
   }
 });
 
-renderJobs();
+// Initial load
+fetchJobs();
