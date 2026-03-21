@@ -27,10 +27,10 @@ app.get("/jobs", (req, res) => {
 });
 
 app.post("/jobs", (req, res) => {
-  const { company, role, status, deadline } = req.body;
+  const { company, role, status, applicationdate } = req.body;
   db.run(
-    "INSERT INTO jobs (company, role, status, deadline) VALUES (?, ?, ?, ?)",
-    [company, role, status, deadline],
+    "INSERT INTO jobs (company, role, status, applicationdate) VALUES (?, ?, ?, ?)",
+    [company, role, status, applicationdate],
     function (err) {
       if (err) return res.status(500).json(err);
       res.json({ id: this.lastID });
@@ -46,10 +46,10 @@ app.delete("/jobs/:id", (req, res) => {
 });
 
 app.put("/jobs/:id", (req, res) => {
-  const { company, role, status, deadline } = req.body;
+  const { company, role, status, applicationdate } = req.body;
   db.run(
-    "UPDATE jobs SET company=?, role=?, status=?, deadline=? WHERE id=?",
-    [company, role, status, deadline, req.params.id],
+    "UPDATE jobs SET company=?, role=?, status=?, applicationdate=? WHERE id=?",
+    [company, role, status, applicationdate, req.params.id],
     function (err) {
       if (err) return res.status(500).json(err);
       res.json({ updated: this.changes });
