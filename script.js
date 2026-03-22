@@ -7,24 +7,22 @@ const search = document.getElementById("search");
 const companyInput = document.getElementById("company");
 const roleInput = document.getElementById("role");
 const statusInput = document.getElementById("status");
-const deadlineInput = document.getElementById("deadline");
+const deadlineInput = document.getElementById("applicationdate");
+const linkInput = document.getElementById("link");
 
 let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
 
-// Track active filters for each column
-let activeFilters = { company: [], role: [], status: [], deadline: [] };
+let activeFilters = { company: [], role: [], status: [], applicationdate: [], link: [] };
 
 // ---------------- API CALLS ----------------
 
-// Fetch jobs from backend
 async function fetchJobs() {
   const res = await fetch("http://localhost:3000/jobs");
   jobs = await res.json();
   renderJobs(search.value);
 }
 
-// Add new job
 async function addJob(job) {
   await fetch("http://localhost:3000/jobs", {
     method: "POST",
@@ -34,13 +32,11 @@ async function addJob(job) {
   fetchJobs();
 }
 
-// Delete job
 async function deleteJob(id) {
   await fetch(`http://localhost:3000/jobs/${id}`, { method: "DELETE" });
   fetchJobs();
 }
 
-// Update job
 async function updateJob(id, job) {
   await fetch(`http://localhost:3000/jobs/${id}`, {
     method: "PUT",
@@ -61,20 +57,18 @@ function renderJobs(filter = "") {
     job.status.toLowerCase().includes(filter.toLowerCase())
   );
 
-  // Apply column filters
   Object.keys(activeFilters).forEach(key => {
     if (activeFilters[key].length > 0) {
       filteredJobs = filteredJobs.filter(job => activeFilters[key].includes(job[key]));
     }
   });
 
-  // Apply sorting
   if (sortConfig.key) {
     filteredJobs.sort((a, b) => {
       let valA = a[sortConfig.key];
       let valB = b[sortConfig.key];
 
-      if (sortConfig.key === "deadline") {
+      if (sortConfig.key === "applicationdate") {
         valA = new Date(valA);
         valB = new Date(valB);
       }
@@ -91,7 +85,8 @@ function renderJobs(filter = "") {
         <td>${job.company}</td>
         <td>${job.role}</td>
         <td>${job.status}</td>
-        <td>${job.deadline}</td>
+        <td>${job.applicationdate}</td>
+        <td>${job.link ? `<a href="${job.link}" target="_blank">Open</a>` : ""}</td>
         <td>
           <button onclick="editJob(${job.id})">Edit</button>
           <button onclick="deleteJob(${job.id})">Delete</button>
@@ -112,7 +107,8 @@ form.addEventListener("submit", e => {
     company: companyInput.value,
     role: roleInput.value,
     status: statusInput.value,
-    deadline: deadlineInput.value
+    applicationdate: deadlineInput.value,
+    link: linkInput.value || ""
   };
 
   if (editIndex !== null) {
@@ -130,7 +126,8 @@ function editJob(id) {
   companyInput.value = job.company;
   roleInput.value = job.role;
   statusInput.value = job.status;
-  deadlineInput.value = job.deadline;
+  deadlineInput.value = job.applicationdate;
+  linkInput.value = job.link || "";
   editIndex = id;
 }
 

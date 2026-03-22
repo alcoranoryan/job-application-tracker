@@ -12,8 +12,9 @@
 <form id="jobForm">
   <input type="text" id="company" placeholder="Company" required>
   <input type="text" id="role" placeholder="Role" required>
-  <input type="date" id="deadline" required>
-
+  <input type="date" id="applicationdate" required>
+  <input type="url" id="link" placeholder="Job Link (optional)">
+  
   <select id="status">
     <option>Applied</option>
     <option>Interview</option>
@@ -42,8 +43,11 @@
       <th class="sortable" data-key="status" data-label="Status" onclick="sortTable('status')">
         Status ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'status')">▼</button>
       </th>
-      <th class="sortable" data-key="deadline" data-label="Deadline" onclick="sortTable('deadline')">
-        Deadline ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'deadline')">▼</button>
+      <th class="sortable" data-key="applicationdate" data-label="Date" onclick="sortTable('applicationdate')">
+        Date ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'applicationdate')">▼</button>
+      </th>
+      <th class="sortable" data-key="link" data-label="Link" onclick="sortTable('link')">
+        Link ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'link')">▼</button>
       </th>
       <th>Actions</th>
     </tr>
