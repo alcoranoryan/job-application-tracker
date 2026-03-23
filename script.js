@@ -7,13 +7,13 @@ const search = document.getElementById("search");
 const companyInput = document.getElementById("company");
 const roleInput = document.getElementById("role");
 const statusInput = document.getElementById("status");
-const deadlineInput = document.getElementById("applicationdate");
+const deadlineInput = document.getElementById("deadline");
 
 let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
 
 // Track active filters for each column
-let activeFilters = { company: [], role: [], status: [], applicationdate: [] };
+let activeFilters = { company: [], role: [], status: [], deadline: [] };
 
 // ---------------- API CALLS ----------------
 
@@ -74,7 +74,7 @@ function renderJobs(filter = "") {
       let valA = a[sortConfig.key];
       let valB = b[sortConfig.key];
 
-      if (sortConfig.key === "applicationdate") {
+      if (sortConfig.key === "deadline") {
         valA = new Date(valA);
         valB = new Date(valB);
       }
@@ -112,7 +112,7 @@ form.addEventListener("submit", e => {
     company: companyInput.value,
     role: roleInput.value,
     status: statusInput.value,
-    applicationdate: deadlineInput.value
+    deadline: deadlineInput.value
   };
 
   if (editIndex !== null) {
@@ -130,7 +130,7 @@ function editJob(id) {
   companyInput.value = job.company;
   roleInput.value = job.role;
   statusInput.value = job.status;
-  deadlineInput.value = job.applicationdate;
+  deadlineInput.value = job.deadline;
   editIndex = id;
 }
 
