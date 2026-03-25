@@ -166,6 +166,86 @@ function updateHeaderIndicators() {
   });
 }
 
+// ---------------- FILTERING ----------------
+
+function toggleFilter(event, key) {
+  event.stopPropagation();
+  const menu = document.getElementById("filterMenu");
+  menu.innerHTML = "";
+
+  const values = [...new Set(jobs.map(job => job[key]))];
+
+  const allChecked =
+    activeFilters[key].length === 0 ||
+    activeFilters[key].length === values.length;
+
+  menu.innerHTML += `
+    <label>
+      <input type="checkbox" id="selectAll-${key}" ${allChecked ? "checked" : ""} onchange="toggleSelectAll('${key}')">
+      (Select All)
+    </label>
+  `;
+
+  values.forEach(val => {
+    const checked = activeFilters[key].length === 0 || activeFilters[key].includes(val);
+    menu.innerHTML += `
+      <label>
+        <input type="checkbox" value="${val}" ${checked ? "checked" : ""}>
+        ${val}
+      </label>
+    `;
+  });
+
+  menu.innerHTML += `
+    <button onclick="applyFilter('${key}')">Apply</button>
+    <button onclick="clearFilter('${key}')">Clear Filter</button>
+  `;
+
+  const rect = event.target.getBoundingClientRect();
+  menu.style.left = rect.left + window.scrollX + "px";
+  menu.style.top = rect.bottom + window.scrollY + "px";
+  menu.style.display = "block";
+}
+
+function applyFilter(key) {
+  const menu = document.getElementById("filterMenu");
+  const checkboxes = menu.querySelectorAll("input[type='checkbox'][value]");
+  activeFilters[key] = Array.from(checkboxes)
+    .filter(cb => cb.checked)
+    .map(cb => cb.value);
+
+  menu.style.display = "none";
+  renderJobs(search.value);
+}
+
+function clearFilter(key) {
+  activeFilters[key] = [];
+  const menu = document.getElementById("filterMenu");
+  const checkboxes = menu.querySelectorAll("input[type='checkbox']");
+  checkboxes.forEach(cb => cb.checked = false);
+  menu.style.display = "none";
+  renderJobs(search.value);
+}
+
+function toggleSelectAll(key) {
+  const menu = document.getElementById("filterMenu");
+  const selectAll = document.getElementById(`selectAll-${key}`);
+  const checkboxes = menu.querySelectorAll("input[type='checkbox'][value]");
+  checkboxes.forEach(cb => {
+    cb.checked = selectAll.checked;
+  });
+}
+
+// Prevent closing when clicking inside menu
+document.getElementById("filterMenu").addEventListener("click", (event) => {
+  event.stopPropagation();
+});
+
+// Close filter menu when clicking outside
+document.addEventListener("click", () => {
+  document.getElementById("filterMenu").style.display = "none";
+});
+
 // ---------------- SEARCH ----------------
 
 search.addEventListener("input", () => {
