@@ -159,3 +159,14 @@ td button:first-child {
 td button:last-child {
   background-color: #77877A; /* Reseda Creme for Delete */
 }
+
+/* Link styling */
+td a {
+  color: #3C363B;
+  text-decoration: underline;
+  font-size: 13px;
+}
+
+td a:hover {
+  color: #77877A;
+}

@@ -8,23 +8,22 @@ const companyInput = document.getElementById("company");
 const roleInput = document.getElementById("role");
 const statusInput = document.getElementById("status");
 const deadlineInput = document.getElementById("deadline");
+const linkInput = document.getElementById("link"); // NEW
 
 let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
 
-// Track active filters for each column
+// Add link in filters (optional but safe)
 let activeFilters = { company: [], role: [], status: [], deadline: [] };
 
 // ---------------- API CALLS ----------------
 
-// Fetch jobs from backend
 async function fetchJobs() {
   const res = await fetch("http://localhost:3000/jobs");
   jobs = await res.json();
   renderJobs(search.value);
 }
 
-// Add new job
 async function addJob(job) {
   await fetch("http://localhost:3000/jobs", {
     method: "POST",
@@ -34,13 +33,11 @@ async function addJob(job) {
   fetchJobs();
 }
 
-// Delete job
 async function deleteJob(id) {
   await fetch(`http://localhost:3000/jobs/${id}`, { method: "DELETE" });
   fetchJobs();
 }
 
-// Update job
 async function updateJob(id, job) {
   await fetch(`http://localhost:3000/jobs/${id}`, {
     method: "PUT",
@@ -61,14 +58,12 @@ function renderJobs(filter = "") {
     job.status.toLowerCase().includes(filter.toLowerCase())
   );
 
-  // Apply column filters
   Object.keys(activeFilters).forEach(key => {
     if (activeFilters[key].length > 0) {
       filteredJobs = filteredJobs.filter(job => activeFilters[key].includes(job[key]));
     }
   });
 
-  // Apply sorting
   if (sortConfig.key) {
     filteredJobs.sort((a, b) => {
       let valA = a[sortConfig.key];
@@ -92,6 +87,12 @@ function renderJobs(filter = "") {
         <td>${job.role}</td>
         <td>${job.status}</td>
         <td>${job.deadline}</td>
+
+        <!-- LINK COLUMN -->
+        <td>
+          ${job.link ? `<a href="${job.link}" target="_blank">View</a>` : ""}
+        </td>
+
         <td>
           <button onclick="editJob(${job.id})">Edit</button>
           <button onclick="deleteJob(${job.id})">Delete</button>
@@ -103,7 +104,7 @@ function renderJobs(filter = "") {
   updateHeaderIndicators();
 }
 
-// ---------------- FORM HANDLING ----------------
+// ---------------- FORM ----------------
 
 form.addEventListener("submit", e => {
   e.preventDefault();
@@ -112,7 +113,8 @@ form.addEventListener("submit", e => {
     company: companyInput.value,
     role: roleInput.value,
     status: statusInput.value,
-    deadline: deadlineInput.value
+    deadline: deadlineInput.value,
+    link: linkInput.value || "" // NEW (optional)
   };
 
   if (editIndex !== null) {
@@ -127,10 +129,13 @@ form.addEventListener("submit", e => {
 
 function editJob(id) {
   const job = jobs.find(j => j.id === id);
+
   companyInput.value = job.company;
   roleInput.value = job.role;
   statusInput.value = job.status;
   deadlineInput.value = job.deadline;
+  linkInput.value = job.link || ""; // NEW
+
   editIndex = id;
 }
 
@@ -160,86 +165,6 @@ function updateHeaderIndicators() {
     `;
   });
 }
-
-// ---------------- FILTERING ----------------
-
-function toggleFilter(event, key) {
-  event.stopPropagation();
-  const menu = document.getElementById("filterMenu");
-  menu.innerHTML = "";
-
-  const values = [...new Set(jobs.map(job => job[key]))];
-
-  const allChecked =
-    activeFilters[key].length === 0 ||
-    activeFilters[key].length === values.length;
-
-  menu.innerHTML += `
-    <label>
-      <input type="checkbox" id="selectAll-${key}" ${allChecked ? "checked" : ""} onchange="toggleSelectAll('${key}')">
-      (Select All)
-    </label>
-  `;
-
-  values.forEach(val => {
-    const checked = activeFilters[key].length === 0 || activeFilters[key].includes(val);
-    menu.innerHTML += `
-      <label>
-        <input type="checkbox" value="${val}" ${checked ? "checked" : ""}>
-        ${val}
-      </label>
-    `;
-  });
-
-  menu.innerHTML += `
-    <button onclick="applyFilter('${key}')">Apply</button>
-    <button onclick="clearFilter('${key}')">Clear Filter</button>
-  `;
-
-  const rect = event.target.getBoundingClientRect();
-  menu.style.left = rect.left + window.scrollX + "px";
-  menu.style.top = rect.bottom + window.scrollY + "px";
-  menu.style.display = "block";
-}
-
-function applyFilter(key) {
-  const menu = document.getElementById("filterMenu");
-  const checkboxes = menu.querySelectorAll("input[type='checkbox'][value]");
-  activeFilters[key] = Array.from(checkboxes)
-    .filter(cb => cb.checked)
-    .map(cb => cb.value);
-
-  menu.style.display = "none";
-  renderJobs(search.value);
-}
-
-function clearFilter(key) {
-  activeFilters[key] = [];
-  const menu = document.getElementById("filterMenu");
-  const checkboxes = menu.querySelectorAll("input[type='checkbox']");
-  checkboxes.forEach(cb => cb.checked = false);
-  menu.style.display = "none";
-  renderJobs(search.value);
-}
-
-function toggleSelectAll(key) {
-  const menu = document.getElementById("filterMenu");
-  const selectAll = document.getElementById(`selectAll-${key}`);
-  const checkboxes = menu.querySelectorAll("input[type='checkbox'][value]");
-  checkboxes.forEach(cb => {
-    cb.checked = selectAll.checked;
-  });
-}
-
-// Prevent closing when clicking inside menu
-document.getElementById("filterMenu").addEventListener("click", (event) => {
-  event.stopPropagation();
-});
-
-// Close filter menu when clicking outside
-document.addEventListener("click", () => {
-  document.getElementById("filterMenu").style.display = "none";
-});
 
 // ---------------- SEARCH ----------------
 
