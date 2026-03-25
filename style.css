@@ -2,18 +2,20 @@
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
-  background-color: #F6F4F3;
-  color: #3C363B;
+  background-color: #F6F4F3; /* White Smoke background */
+  color: #3C363B; /* Charcoal text */
 }
 
+/* Heading */
 h1 {
-  color: #3C363B;
+  color: #3C363B; /* Charcoal */
   text-align: center;
   margin-bottom: 20px;
 }
 
+/* Form styling */
 form {
-  background-color: #E8E8E8;
+  background-color: #E8E8E8; /* Platinum */
   padding: 15px;
   border-radius: 8px;
   display: flex;
@@ -50,43 +52,50 @@ form input, form select, button {
 .filter-menu button {
   margin-top: 8px;
   padding: 6px 10px;
-  background-color: #77877A;
-  color: #F6F4F3;
+  background-color: #77877A; /* Reseda Creme */
+  color: #F6F4F3; /* White Smoke */
   border: none;
   border-radius: 4px;
   cursor: pointer;
 }
 
+/* Buttons */
 button {
-  background-color: #77877A;
-  color: #F6F4F3;
+  background-color: #77877A; /* Reseda Creme accent */
+  color: #F6F4F3; /* White Smoke text */
   border: none;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }
 
 button:hover {
-  background-color: #A2B2A7;
+  background-color: #A2B2A7; /* Soft Sage hover */
 }
 
+/* Search bar */
 #search {
   width: 98.5%;
+  /*display: flex;
+  flex-wrap: wrap;*/
   padding: 10px;
   margin-top: 15px;
   border: 1px solid #ccc;
   border-radius: 6px;
 }
 
+
+
+/* Table styling */
 table {
   width: 100%;
   margin-top: 20px;
   border-collapse: collapse;
-  background-color: #FFFFFF;
+  background-color: #FFFFFF; /* White background for clarity */
 }
 
 th {
-  background-color: #3C363B;
-  color: #F6F4F3;
+  background-color: #3C363B; /* Charcoal header */
+  color: #F6F4F3; /* White Smoke text */
   padding: 12px;
   text-align: left;
 }
@@ -96,14 +105,16 @@ td {
   padding: 10px;
 }
 
+/* Alternate row colors for readability */
 tbody tr:nth-child(even) {
-  background-color: #E8E8E8;
+  background-color: #E8E8E8; /* Platinum */
 }
 
 tbody tr:nth-child(odd) {
-  background-color: #F6F4F3;
+  background-color: #F6F4F3; /* White Smoke */
 }
 
+/* Action buttons inside table */
 td button {
   margin-right: 5px;
   padding: 6px 10px;
@@ -118,6 +129,7 @@ td button {
   font-size: 12px;
   margin-left: 5px;
 }
+
 
 .suggestions {
   border: 1px solid #ccc;
@@ -137,23 +149,24 @@ td button {
 }
 
 .suggestions div:hover {
-  background-color: #E8E8E8;
+  background-color: #E8E8E8; /* Platinum */
 }
 
 td button:first-child {
-  background-color: #A2B2A7;
+  background-color: #A2B2A7; /* Soft Sage for Edit */
 }
 
 td button:last-child {
-  background-color: #77877A;
+  background-color: #77877A; /* Reseda Creme for Delete */
 }
 
 /* Link styling */
 td a {
-  color: #3366cc;
-  text-decoration: none;
+  color: #3C363B;
+  text-decoration: underline;
+  font-size: 13px;
 }
 
 td a:hover {
-  text-decoration: underline;
+  color: #77877A;
 }

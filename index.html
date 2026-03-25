@@ -12,9 +12,11 @@
 <form id="jobForm">
   <input type="text" id="company" placeholder="Company" required>
   <input type="text" id="role" placeholder="Role" required>
-  <input type="date" id="applicationdate" required>
+  <input type="date" id="deadline" required>
+
+  <!-- NEW LINK INPUT (OPTIONAL) -->
   <input type="url" id="link" placeholder="Job Link (optional)">
-  
+
   <select id="status">
     <option>Applied</option>
     <option>Interview</option>
@@ -25,7 +27,6 @@
   <button type="submit">Add Job</button>
 </form>
 
-<!-- Search bar with autocomplete/typeahead suggestions -->
 <div style="position: relative; width: 100%;">
   <input type="text" id="search" placeholder="Search...">
   <div id="suggestions" class="suggestions"></div>
@@ -43,19 +44,19 @@
       <th class="sortable" data-key="status" data-label="Status" onclick="sortTable('status')">
         Status ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'status')">▼</button>
       </th>
-      <th class="sortable" data-key="applicationdate" data-label="Date" onclick="sortTable('applicationdate')">
-        Date ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'applicationdate')">▼</button>
+      <th class="sortable" data-key="deadline" data-label="Deadline" onclick="sortTable('deadline')">
+        Deadline ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'deadline')">▼</button>
       </th>
-      <th class="sortable" data-key="link" data-label="Link" onclick="sortTable('link')">
-        Link ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'link')">▼</button>
-      </th>
+
+      <!-- NEW LINK COLUMN -->
+      <th>Link</th>
+
       <th>Actions</th>
     </tr>
   </thead>
   <tbody id="jobList"></tbody>
 </table>
 
-<!-- Container for filter dropdowns -->
 <div id="filterMenu" class="filter-menu"></div>
 
 <script src="script.js"></script>
