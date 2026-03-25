@@ -18,6 +18,9 @@ db.run(`CREATE TABLE IF NOT EXISTS jobs (
   link TEXT
 )`);
 
+//CREATE TABLE IF NOT EXISTS/ ALTER TABLE
+db.run("ALTER TABLE jobs ADD COLUMN link TEXT", () => {});
+
 // GET
 app.get("/jobs", (req, res) => {
   db.all("SELECT * FROM jobs", [], (err, rows) => {
