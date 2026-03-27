@@ -45,7 +45,7 @@
         Status ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'status')">▼</button>
       </th>
       <th class="sortable" data-key="deadline" data-label="Date" onclick="sortTable('deadline')">
-        Deadline ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'deadline')">▼</button>
+        Date ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'deadline')">▼</button>
       </th>
 
       <!-- NEW LINK COLUMN -->
@@ -54,10 +54,10 @@
       <th>Actions</th>
     </tr>
   </thead>
-  <tbody id="jobList"></tbody>
+  <tbody id="jobList"></tbody> <!-- Table body where job rows are dynamically inserted -->
 </table>
 
-<div id="filterMenu" class="filter-menu"></div>
+<div id="filterMenu" class="filter-menu"></div> <!-- Floating container for filter dropdown menus -->
 
 <script src="script.js"></script>
 </body>
