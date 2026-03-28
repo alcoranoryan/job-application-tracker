@@ -1,4 +1,6 @@
 let jobs = [];
+let currentPage = 1;
+let rowsPerPage = 10;
 
 const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
@@ -8,7 +10,7 @@ const companyInput = document.getElementById("company");
 const roleInput = document.getElementById("role");
 const statusInput = document.getElementById("status");
 const deadlineInput = document.getElementById("deadline");
-const linkInput = document.getElementById("link"); // NEW
+const linkInput = document.getElementById("link"); 
 
 let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
@@ -79,6 +81,56 @@ function renderJobs(filter = "") {
       return 0;
     });
   }
+
+  // Pagination
+  const start = (currentPage - 1) * rowsPerPage;
+  const end = start + rowsPerPage;
+  const paginatedJobs = filteredJobs.slice(start, end);
+
+  paginatedJobs.forEach(job => {
+    jobList.innerHTML += `
+      <tr>
+        <td>${job.company}</td>
+        <td>${job.role}</td>
+        <td>${job.status}</td>
+        <td>${job.deadline}</td>
+        <td>${job.link ? `<a href="${job.link}" target="_blank">View</a>` : ""}</td>
+        <td>
+          <button onclick="editJob(${job.id})">Edit</button>
+          <button onclick="deleteJob(${job.id})">Delete</button>
+        </td>
+      </tr>
+    `;
+  });
+
+  updateHeaderIndicators();
+  renderPagination(filteredJobs.length);
+}
+
+function renderPagination(totalItems) {
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
+
+  const totalPages = Math.ceil(totalItems / rowsPerPage);
+
+  if (totalPages <= 1) return;
+
+  pagination.innerHTML += `<button onclick="goToPage(1)">First</button>`;
+  pagination.innerHTML += `<button onclick="goToPage(${Math.max(1, currentPage - 1)})"><</button>`;
+
+  for (let i = 1; i <= totalPages; i++) {
+    pagination.innerHTML += `<button class="${i === currentPage ? "active" : ""}" onclick="goToPage(${i})">${i}</button>`;
+  }
+
+  pagination.innerHTML += `<button onclick="goToPage(${Math.min(totalPages, currentPage + 1)})">></button>`;
+  pagination.innerHTML += `<button onclick="goToPage(${totalPages})">Last</button>`;
+}
+
+function goToPage(page) {
+  currentPage = page;
+  renderJobs(search.value);
+//}
+
 
   filteredJobs.forEach(job => {
     jobList.innerHTML += `
