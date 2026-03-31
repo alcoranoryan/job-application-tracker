@@ -11,6 +11,7 @@ const roleInput = document.getElementById("role");
 const statusInput = document.getElementById("status");
 const deadlineInput = document.getElementById("deadline");
 const linkInput = document.getElementById("link"); 
+const resumeInput = document.getElementById("resume");
 
 let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
@@ -88,20 +89,32 @@ function renderJobs(filter = "") {
   const paginatedJobs = filteredJobs.slice(start, end);
 
   paginatedJobs.forEach(job => {
-    jobList.innerHTML += `
-      <tr>
-        <td>${job.company}</td>
-        <td>${job.role}</td>
-        <td>${job.status}</td>
-        <td>${job.deadline}</td>
-        <td>${job.link ? `<a href="${job.link}" target="_blank">View</a>` : ""}</td>
-        <td>
-          <button onclick="editJob(${job.id})">Edit</button>
-          <button onclick="deleteJob(${job.id})">Delete</button>
-        </td>
-      </tr>
-    `;
-  });
+  let resumeCell = "";
+  if (job.resume) {
+    const ext = job.resume.split(".").pop().toLowerCase();
+    const resumeUrl = `http://localhost:3000${job.resume}`;
+    if (ext === "pdf") {
+      resumeCell = `<a href="${resumeUrl}" target="_blank">Preview</a>`;
+    } else {
+      resumeCell = `<a href="${resumeUrl}" download>Download</a>`;
+    }
+  }
+
+  jobList.innerHTML += `
+    <tr>
+      <td>${job.company}</td>
+      <td>${job.role}</td>
+      <td>${job.status}</td>
+      <td>${job.deadline}</td>
+      <td>${job.link ? `<a href="${job.link}" target="_blank">View</a>` : ""}</td>
+      <td>${resumeCell}</td>
+      <td>
+        <button onclick="editJob(${job.id})">Edit</button>
+        <button onclick="deleteJob(${job.id})">Delete</button>
+      </td>
+    </tr>
+  `;
+});
 
   updateHeaderIndicators();
   renderPagination(filteredJobs.length);
@@ -139,12 +152,14 @@ function goToPage(page) {
         <td>${job.role}</td>
         <td>${job.status}</td>
         <td>${job.deadline}</td>
-
-        <!-- LINK COLUMN -->
         <td>
           ${job.link ? `<a href="${job.link}" target="_blank">View</a>` : ""}
         </td>
-
+        <td>
+          ${job.resume 
+            ? `<a href="http://localhost:3000${job.resume}" target="_blank">Download</a>` 
+            : ""}
+        </td>
         <td>
           <button onclick="editJob(${job.id})">Edit</button>
           <button onclick="deleteJob(${job.id})">Delete</button>
@@ -158,15 +173,29 @@ function goToPage(page) {
 
 // ---------------- FORM ----------------
 
-form.addEventListener("submit", e => {
+form.addEventListener("submit", async e => {
   e.preventDefault();
+
+  let resumePath = "";
+  if (resumeInput.files.length > 0) {
+    const formData = new FormData();
+    formData.append("resume", resumeInput.files[0]);
+
+    const res = await fetch("http://localhost:3000/uploadResume", {
+      method: "POST",
+      body: formData
+    });
+    const data = await res.json();
+    resumePath = data.path;
+  }
 
   const job = {
     company: companyInput.value,
     role: roleInput.value,
     status: statusInput.value,
     deadline: deadlineInput.value,
-    link: linkInput.value || "" // NEW (optional)
+    link: linkInput.value || "",
+    resume: resumePath || "" // optional
   };
 
   if (editIndex !== null) {
@@ -178,6 +207,7 @@ form.addEventListener("submit", e => {
 
   form.reset();
 });
+
 
 function editJob(id) {
   const job = jobs.find(j => j.id === id);
