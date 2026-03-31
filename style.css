@@ -90,12 +90,12 @@ table {
   width: 100%;
   margin-top: 20px;
   border-collapse: collapse;
-  background-color: #FFFFFF; /* White background for clarity */
+  background-color: #FFFFFF;
 }
 
 th {
   background-color: #3C363B; /* Charcoal header */
-  color: #F6F4F3; /* White Smoke text */
+  color: #F6F4F3; 
   padding: 12px;
   text-align: left;
 }

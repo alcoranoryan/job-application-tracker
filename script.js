@@ -56,10 +56,10 @@ function renderJobs(filter = "") {
   jobList.innerHTML = "";
 
   let filteredJobs = jobs.filter(job =>
-    job.company.toLowerCase().includes(filter.toLowerCase()) ||
-    job.role.toLowerCase().includes(filter.toLowerCase()) ||
-    job.status.toLowerCase().includes(filter.toLowerCase())
-  );
+  job.company.toLowerCase().startsWith(filter.toLowerCase()) ||
+  job.role.toLowerCase().startsWith(filter.toLowerCase()) ||
+  job.status.toLowerCase().startsWith(filter.toLowerCase())
+);
 
   Object.keys(activeFilters).forEach(key => {
     if (activeFilters[key].length > 0) {
@@ -343,7 +343,7 @@ search.addEventListener("input", () => {
         jobs
           .map(job => [job.company, job.role, job.status])
           .flat()
-          .filter(val => val.toLowerCase().includes(query))
+          .filter(val => val.toLowerCase().startsWith(query))
       )
     ];
 
