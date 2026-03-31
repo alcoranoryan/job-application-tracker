@@ -1,6 +1,7 @@
 let jobs = [];
 let currentPage = 1;
 let rowsPerPage = 10;
+let deleteId = null;
 
 const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
@@ -36,10 +37,23 @@ async function addJob(job) {
   fetchJobs();
 }
 
-async function deleteJob(id) {
-  await fetch(`http://localhost:3000/jobs/${id}`, { method: "DELETE" });
-  fetchJobs();
+function deleteJob(id) {
+  deleteId = id;
+  document.getElementById("deleteModal").style.display = "block";
 }
+
+document.getElementById("confirmDelete").onclick = () => {
+  fetch(`http://localhost:3000/jobs/${deleteId}`, { method: "DELETE" })
+    .then(() => {
+      fetchJobs();
+      document.getElementById("deleteModal").style.display = "none";
+    });
+};
+
+document.getElementById("cancelDelete").onclick = () => {
+  document.getElementById("deleteModal").style.display = "none";
+};
+
 
 async function updateJob(id, job) {
   await fetch(`http://localhost:3000/jobs/${id}`, {
