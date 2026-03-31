@@ -13,10 +13,9 @@
   <input type="text" id="company" placeholder="Company" required>
   <input type="text" id="role" placeholder="Role" required>
   <input type="date" id="deadline" required>
-
-  <!-- NEW LINK INPUT (OPTIONAL) -->
   <input type="url" id="link" placeholder="Job Link (optional)">
-
+  <input type="file" id="resume" accept=".doc,.docx,.pdf">
+  
   <select id="status">
     <option>Applied</option>
     <option>Interview</option>
@@ -48,7 +47,7 @@
         Date ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'deadline')">▼</button>
       </th>
       <th>Link</th>
-
+      <th>Resume</th>
       <th>Actions</th>
     </tr>
   </thead>
