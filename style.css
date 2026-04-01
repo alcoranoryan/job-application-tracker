@@ -97,12 +97,15 @@ th {
   background-color: #3C363B; /* Charcoal header */
   color: #F6F4F3; /* White Smoke text */
   padding: 12px;
-  text-align: left;
+  text-align: center;
+  vertical-align: middle;
 }
 
 td {
   border: 1px solid #ccc;
   padding: 10px;
+  text-align: center;
+  vertical-align: middle;
 }
 
 /* Alternate row colors for readability */
