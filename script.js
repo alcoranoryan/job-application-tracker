@@ -14,6 +14,28 @@ const deadlineInput = document.getElementById("deadline");
 const linkInput = document.getElementById("link"); 
 const resumeInput = document.getElementById("resume");
 
+statusInput.addEventListener("change", () => {
+  const today = new Date().toISOString().split("T")[0];
+
+  if (statusInput.value === "Interview") {
+    // Allow any date (future or past)
+    deadlineInput.removeAttribute("max");
+  } else {
+    // Restrict to today or earlier
+    deadlineInput.setAttribute("max", today);
+  }
+});
+
+// Initialize date restriction on page load
+window.addEventListener("DOMContentLoaded", () => {
+  const today = new Date().toISOString().split("T")[0];
+  if (statusInput.value === "Interview") {
+    deadlineInput.removeAttribute("max");
+  } else {
+    deadlineInput.setAttribute("max", today);
+  }
+});
+
 let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
 
@@ -190,6 +212,16 @@ function goToPage(page) {
 form.addEventListener("submit", async e => {
   e.preventDefault();
 
+  const selectedStatus = statusInput.value;
+  const selectedDate = new Date(deadlineInput.value);
+  const today = new Date();
+
+  // Validation: only allow future dates if status is "Interview"
+  if (selectedDate > today && selectedStatus !== "Interview") {
+    alert("Future dates are only allowed when status is 'Interview'.");
+    return; // stop submission
+  }
+
   let resumePath = "";
   if (resumeInput.files.length > 0) {
     const formData = new FormData();
@@ -206,10 +238,10 @@ form.addEventListener("submit", async e => {
   const job = {
     company: companyInput.value,
     role: roleInput.value,
-    status: statusInput.value,
+    status: selectedStatus,
     deadline: deadlineInput.value,
     link: linkInput.value || "",
-    resume: resumePath || "" // optional
+    resume: resumePath || ""
   };
 
   if (editIndex !== null) {
@@ -234,6 +266,7 @@ function editJob(id) {
 
   editIndex = id;
 }
+
 
 // ---------------- SORTING ----------------
 
