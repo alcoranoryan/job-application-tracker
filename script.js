@@ -127,13 +127,13 @@ function renderJobs(filter = "") {
   paginatedJobs.forEach(job => {
   let resumeCell = "";
   if (job.resume) {
-    const ext = job.resume.split(".").pop().toLowerCase();
     const resumeUrl = `http://localhost:3000${job.resume}`;
-    if (ext === "pdf") {
-      resumeCell = `<a href="${resumeUrl}" target="_blank">Preview</a>`;
-    } else {
-      resumeCell = `<a href="${resumeUrl}" download>Download</a>`;
-    }
+
+    // Always show both Download and Preview links
+    resumeCell = `
+      <a href="${resumeUrl}" download>Download</a> |
+      <a href="${resumeUrl}" target="_blank">Preview</a>
+    `;
   }
 
   jobList.innerHTML += `
