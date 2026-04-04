@@ -127,13 +127,26 @@ function renderJobs(filter = "") {
   paginatedJobs.forEach(job => {
   let resumeCell = "";
   if (job.resume) {
+    const ext = job.resume.split(".").pop().toLowerCase();
     const resumeUrl = `http://localhost:3000${job.resume}`;
 
-    // Always show both Download and Preview links
-    resumeCell = `
-      <a href="${resumeUrl}" download>Download</a> |
-      <a href="${resumeUrl}" target="_blank">Preview</a>
-    `;
+    if (ext === "pdf") {
+      // PDF: browser can preview directly
+      resumeCell = `
+        <a href="${resumeUrl}" download>Download</a> |
+        <a href="${resumeUrl}" target="_blank">Preview</a>
+      `;
+    } else if (ext === "doc" || ext === "docx") {
+      // DOC/DOCX: use Google Docs Viewer for preview
+      const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(resumeUrl)}`;
+      resumeCell = `
+        <a href="${resumeUrl}" download>Download</a> |
+        <a href="${viewerUrl}" target="_blank">Preview</a>
+      `;
+    } else {
+      // Other file types: just show download
+      resumeCell = `<a href="${resumeUrl}" download>Download</a>`;
+    }
   }
 
   jobList.innerHTML += `
