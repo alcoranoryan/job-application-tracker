@@ -125,27 +125,31 @@ function renderJobs(filter = "") {
   const paginatedJobs = filteredJobs.slice(start, end);
 
   paginatedJobs.forEach(job => {
+  let linkCell = "";
   let resumeCell = "";
+
+  // ✅ Place your block here
+  if (job.link) {
+    linkCell = `<a href="${job.link}" target="_blank" class="table-btn view">View</a>`;
+  }
+
   if (job.resume) {
     const ext = job.resume.split(".").pop().toLowerCase();
     const resumeUrl = `http://localhost:3000${job.resume}`;
 
     if (ext === "pdf") {
-      // PDF: browser can preview directly
       resumeCell = `
-        <a href="${resumeUrl}" download>Download</a> |
-        <a href="${resumeUrl}" target="_blank">Preview</a>
+        <a href="${resumeUrl}" download class="table-btn download">Download</a>
+        <a href="${resumeUrl}" target="_blank" class="table-btn preview">Preview</a>
       `;
     } else if (ext === "doc" || ext === "docx") {
-      // DOC/DOCX: use Google Docs Viewer for preview
       const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(resumeUrl)}`;
       resumeCell = `
-        <a href="${resumeUrl}" download>Download</a> |
-        <a href="${viewerUrl}" target="_blank">Preview</a>
+        <a href="${resumeUrl}" download class="table-btn download">Download</a>
+        <a href="${viewerUrl}" target="_blank" class="table-btn preview">Preview</a>
       `;
     } else {
-      // Other file types: just show download
-      resumeCell = `<a href="${resumeUrl}" download>Download</a>`;
+      resumeCell = `<a href="${resumeUrl}" download class="table-btn download">Download</a>`;
     }
   }
 
@@ -155,7 +159,7 @@ function renderJobs(filter = "") {
       <td>${job.role}</td>
       <td>${job.status}</td>
       <td>${job.deadline}</td>
-      <td>${job.link ? `<a href="${job.link}" target="_blank">View</a>` : ""}</td>
+      <td>${linkCell}</td>
       <td>${resumeCell}</td>
       <td>
         <button onclick="editJob(${job.id})">Edit</button>
