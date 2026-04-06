@@ -246,11 +246,12 @@ td a:hover {
 
 .table-btn.preview {
   background-color: #77877A; /* yellow/orange */
-  color: #ffffff;
+  color: #000000;
 }
 
 .table-btn.preview:hover {
   background-color: #000000;
+  color: #FFFFFF;
 }
 
 .table-btn.view {
