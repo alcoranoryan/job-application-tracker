@@ -208,13 +208,13 @@ td button:last-child {
 
 /* Link styling */
 td a {
-  color: #3C363B;
+  color: #000000;
   text-decoration: underline;
   font-size: 13px;
 }
 
 td a:hover {
-  color: #77877A;
+  color: #161616;
 }
 
 .table-btn {
@@ -224,7 +224,7 @@ td a:hover {
   font-size: 14px;
   font-weight: 500;
   color: #fff;
-  background-color: #007bff; /* blue */
+  background-color: #3C363B; /* blue */
   border: none;
   border-radius: 4px;
   text-decoration: none;
@@ -233,30 +233,30 @@ td a:hover {
 }
 
 .table-btn:hover {
-  background-color: #0056b3; /* darker blue on hover */
+  background-color: #77877A; /* darker blue on hover */
 }
 
 .table-btn.download {
-  background-color: #28a745; /* green */
+  background-color: #3C363B; /* green */
 }
 
 .table-btn.download:hover {
-  background-color: #1e7e34;
+  background-color: #77877A;
 }
 
 .table-btn.preview {
-  background-color: #ffc107; /* yellow/orange */
-  color: #000;
+  background-color: #77877A; /* yellow/orange */
+  color: #ffffff;
 }
 
 .table-btn.preview:hover {
-  background-color: #e0a800;
+  background-color: #000000;
 }
 
 .table-btn.view {
-  background-color: #17a2b8; /* teal */
+  background-color: #77877A; /* teal */
 }
 
 .table-btn.view:hover {
-  background-color: #117a8b;
+  background-color: #77877A;
 }
