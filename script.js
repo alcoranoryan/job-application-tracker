@@ -233,14 +233,14 @@ form.addEventListener("submit", async e => {
   const selectedDate = new Date(deadlineInput.value);
   const today = new Date();
 
-  // Validation: only allow future dates if status is "Interview"
   if (selectedDate > today && selectedStatus !== "Interview") {
     alert("Future dates are only allowed when status is 'Interview'.");
-    return; // stop submission
+    return;
   }
 
   let resumePath = "";
   if (resumeInput.files.length > 0) {
+    // User uploaded a new resume → replace
     const formData = new FormData();
     formData.append("resume", resumeInput.files[0]);
 
@@ -250,6 +250,9 @@ form.addEventListener("submit", async e => {
     });
     const data = await res.json();
     resumePath = data.path;
+  } else if (editIndexJob) {
+    // ✅ Keep old resume if no new file uploaded
+    resumePath = editIndexJob.resume;
   }
 
   const job = {
@@ -264,6 +267,7 @@ form.addEventListener("submit", async e => {
   if (editIndex !== null) {
     updateJob(editIndex, job);
     editIndex = null;
+    editIndexJob = null;
   } else {
     addJob(job);
   }
@@ -275,13 +279,22 @@ form.addEventListener("submit", async e => {
 function editJob(id) {
   const job = jobs.find(j => j.id === id);
 
+  // Autofill existing values
   companyInput.value = job.company;
   roleInput.value = job.role;
   statusInput.value = job.status;
   deadlineInput.value = job.deadline;
-  linkInput.value = job.link || ""; // NEW
-
+  linkInput.value = job.link || "";
+  //resumeInput.value = job.resume;
+  // ✅ Preserve resume path (store it in editIndexJob)
   editIndex = id;
+  editIndexJob = job; // keep reference to the job being edited
+
+  // ✅ Scroll to form
+  form.scrollIntoView({ behavior: "smooth", block: "start" });
+
+  // ✅ Focus cursor on company input (without clearing it)
+  companyInput.focus();
 }
 
 
