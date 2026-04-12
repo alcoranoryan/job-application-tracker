@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const username = e.target.querySelector("input[placeholder='Username']").value;
     const password = e.target.querySelector("input[placeholder='Password']").value;
 
-    const res = await fetch("http://localhost:3000/SignUp_LogIn_Form.html", {
+    const res = await fetch("http://localhost:3000/login", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ username, password })
