@@ -3,7 +3,9 @@ let currentPage = 1;
 let rowsPerPage = 10;
 let deleteId = null;
 
-const form = document.getElementById("jobForm");
+const API_BASE = "http://localhost:3000"; //Define a single base URL for your backend API
+
+ const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
 const search = document.getElementById("search");
 
