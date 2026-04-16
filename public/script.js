@@ -130,7 +130,6 @@ function renderJobs(filter = "") {
   let linkCell = "";
   let resumeCell = "";
 
-  // ✅ Place your block here
   if (job.link) {
     linkCell = `<a href="${job.link}" target="_blank" class="table-btn view">View</a>`;
   }
@@ -253,7 +252,7 @@ form.addEventListener("submit", async e => {
     const data = await res.json();
     resumePath = data.path;
   } else if (editIndexJob) {
-    // ✅ Keep old resume if no new file uploaded
+    // Keep old resume if no new file uploaded
     resumePath = editIndexJob.resume;
   }
 
@@ -288,14 +287,14 @@ function editJob(id) {
   deadlineInput.value = job.deadline;
   linkInput.value = job.link || "";
   //resumeInput.value = job.resume;
-  // ✅ Preserve resume path (store it in editIndexJob)
+  // Preserve resume path (store it in editIndexJob)
   editIndex = id;
   editIndexJob = job; // keep reference to the job being edited
 
-  // ✅ Scroll to form
+  // Scroll to form
   form.scrollIntoView({ behavior: "smooth", block: "start" });
 
-  // ✅ Focus cursor on company input (without clearing it)
+  // Focus cursor on company input (without clearing it)
   companyInput.focus();
 }
 
