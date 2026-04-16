@@ -31,7 +31,7 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
     alert("Invalid credentials");
   }
 });
-
+ 
 // REGISTER HANDLER
 document.getElementById("registerForm").addEventListener("submit", async (e) => {
   e.preventDefault();
