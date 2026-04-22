@@ -1,3 +1,14 @@
+const user = JSON.parse(localStorage.getItem("user"));
+
+if (!user) {
+  //window.location.href = "/";
+  //window.location.replace("/");
+  window.location.replace("/SignUp_LogIn_Form.html");
+  throw new Error("User not logged in"); // stops further JS execution
+}
+
+document.getElementById("welcomeUser").textContent = `Welcome, ${user.username}`;
+
 let jobs = [];
 let currentPage = 1;
 let rowsPerPage = 10;
@@ -5,7 +16,7 @@ let deleteId = null;
 
 const API_BASE = "http://localhost:3000"; //Define a single base URL for your backend API
 
- const form = document.getElementById("jobForm");
+const form = document.getElementById("jobForm");
 const jobList = document.getElementById("jobList");
 const search = document.getElementById("search");
 
@@ -459,6 +470,18 @@ search.addEventListener("input", () => {
     suggestionsBox.style.display = matches.length ? "block" : "none";
   } else {
     suggestionsBox.style.display = "none";
+  }
+});
+
+//logout
+document.getElementById("logoutBtn").addEventListener("click", () => {
+  const confirmLogout = confirm("Are you sure you want to logout?");
+
+  if (confirmLogout) {
+    localStorage.removeItem("user"); // clear session
+    //Stop everything and redirect cleanly
+    //window.location.replace("/");
+    window.location.replace("/SignUp_LogIn_Form.html");
   }
 });
 
