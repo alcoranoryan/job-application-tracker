@@ -47,7 +47,18 @@ let activeFilters = { company: [], role: [], status: [], deadline: [] };
 // ---------------- API CALLS ----------------
 
 async function fetchJobs() {
-  const res = await fetch("http://localhost:3000/jobs");
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    alert("You are not logged in!");
+    window.location.href = "/";
+    return;
+  }
+
+  const res = await fetch(
+    `${API_BASE}/jobs?user_id=${user.id}&role=${user.role}`
+  );
+
   jobs = await res.json();
   renderJobs(search.value);
 }
@@ -255,6 +266,14 @@ form.addEventListener("submit", async e => {
     // Keep old resume if no new file uploaded
     resumePath = editIndexJob.resume;
   }
+  //safety check
+  const user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+    alert("You are not logged in!");
+    window.location.href = "/";
+    return;
+  }
 
   const job = {
     company: companyInput.value,
@@ -262,7 +281,8 @@ form.addEventListener("submit", async e => {
     status: selectedStatus,
     deadline: deadlineInput.value,
     link: linkInput.value || "",
-    resume: resumePath || ""
+    resume: resumePath || "",
+    user_id: user.id
   };
 
   if (editIndex !== null) {

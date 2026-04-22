@@ -33,6 +33,39 @@ db.run(`CREATE TABLE IF NOT EXISTS users (
   password TEXT
 )`);
 
+//Assign current jobs to testuser1
+/*db.run(`
+  UPDATE jobs
+  SET user_id = (
+    SELECT id FROM users WHERE username = 'testuser1'
+  )
+  WHERE user_id IS NULL
+`, (err) => {
+  if (err) console.error(err);
+  else console.log("Old jobs assigned to testuser1");
+});*/
+/*db.run("ALTER TABLE users ADD COLUMN role TEXT DEFAULT 'user'", (err) => {
+  if (err) console.log("Users table already has role column");
+});
+
+db.run("ALTER TABLE jobs ADD COLUMN user_id INTEGER", (err) => {
+  if (err) console.log("Jobs table already has user_id column");
+});
+
+db.get("SELECT * FROM users WHERE username = 'admin'", (err, row) => {
+  if (!row) {
+    db.run(
+      "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)",
+      ["admin", "admin@email.com", "admin123", "admin"],
+      (err) => {
+        if (err) console.error(err);
+        else console.log("Admin user created");
+      }
+    );
+  } else {
+    console.log("Admin already exists");
+  }
+});*/
 //CREATE TABLE IF NOT EXISTS/ ALTER TABLE
 //db.run("ALTER TABLE jobs ADD COLUMN resume TEXT", () => {});
 
@@ -84,16 +117,15 @@ app.get("/index.html", (req, res) => {
 // Register
 app.post("/register", (req, res) => {
   const { username, email, password } = req.body;
-  console.log("Register attempt:", username, email, password); // debug
+
   db.run(
-    "INSERT INTO users (username, email, password) VALUES (?, ?, ?)",
-    [username, email, password],
+    "INSERT INTO users (username, email, password, role) VALUES (?, ?, ?, ?)",
+    [username, email, password, "user"],
     function (err) {
       if (err) {
         console.error("DB error:", err);
         return res.status(500).json({ error: err.message });
       }
-      console.log("Inserted user ID:", this.lastID); // debug
       res.json({ id: this.lastID });
     }
   );
@@ -112,26 +144,47 @@ app.post("/login", (req, res) => {
         return res.status(500).json({ error: err.message });
       }
       console.log("DB row:", row); // debug
-      if (row) res.json({ success: true });
-      else res.json({ success: false });
+      if (row) {
+        res.json({
+          success: true,
+          user: {
+            id: row.id,
+            username: row.username,
+            role: row.role
+          }
+        });
+      } else {
+        res.json({ success: false });
+      }
     }
   );
 });
 
 // GET
 app.get("/jobs", (req, res) => {
-  db.all("SELECT * FROM jobs", [], (err, rows) => {
-    if (err) return res.status(500).json(err);
-    res.json(rows);
-  });
+  const userId = req.query.user_id;
+  const role = req.query.role;
+
+  if (role === "admin") {
+    db.all("SELECT * FROM jobs", [], (err, rows) => {
+      if (err) return res.status(500).json(err);
+      res.json(rows);
+    });
+  } else {
+    db.all("SELECT * FROM jobs WHERE user_id = ?", [userId], (err, rows) => {
+      if (err) return res.status(500).json(err);
+      res.json(rows);
+    });
+  }
 });
 
 // POST
 app.post("/jobs", (req, res) => {
-  const { company, role, status, deadline, link, resume } = req.body;
+  const { company, role, status, deadline, link, resume, user_id } = req.body;
+
   db.run(
-    "INSERT INTO jobs (company, role, status, deadline, link, resume) VALUES (?, ?, ?, ?, ?, ?)",
-    [company, role, status, deadline, link, resume],
+    "INSERT INTO jobs (company, role, status, deadline, link, resume, user_id) VALUES (?, ?, ?, ?, ?, ?, ?)",
+    [company, role, status, deadline, link, resume, user_id],
     function (err) {
       if (err) return res.status(500).json(err);
       res.json({ id: this.lastID });
@@ -139,6 +192,13 @@ app.post("/jobs", (req, res) => {
   );
 });
 
+// GET all users (for admin filtering)
+app.get("/users", (req, res) => {
+  db.all("SELECT id, username FROM users", [], (err, rows) => {
+    if (err) return res.status(500).json(err);
+    res.json(rows);
+  });
+});
 
 // DELETE
 app.delete("/jobs/:id", (req, res) => {

@@ -26,7 +26,8 @@ document.getElementById("loginForm").addEventListener("submit", async (e) => {
   console.log("Login response:", data);
 
   if (data.success) {
-    window.location.href = `${API_BASE}/index.html`;  // redirect to tracker page
+  localStorage.setItem("user", JSON.stringify(data.user));
+  window.location.href = `${API_BASE}/index.html`;
   } else {
     alert("Invalid credentials");
   }
