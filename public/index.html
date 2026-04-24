@@ -35,9 +35,25 @@
   <div id="suggestions" class="suggestions"></div>
 </div>
 
+<!--User Filter Dropdown (Admin Only)
+<select id="userFilter" multiple size="1" style="display:none;">
+  <option value="">All Users</option>
+</select>-->
+
 <table>
   <thead>
     <tr>
+      <!--<th id="userColumn" style="display:none;">
+        User
+        <button onclick="toggleFilter('username')">▼</button>
+        <div id="filter-username" class="filter-dropdown"></div>
+      </th>-->
+      <th id="userColumn" class="sortable" data-key="username" data-label="User" onclick="sortTable('username')" style="display:none;">
+        User ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'username')">▼</button>
+      </th>
+      <!--<th class="sortable" data-key="username" data-label="User" onclick="sortTable('username')">
+        User ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'username')">▼</button>
+      </th>-->
       <th class="sortable" data-key="company" data-label="Company" onclick="sortTable('company')">
         Company ⇅ <button class="filter-btn" onclick="toggleFilter(event, 'company')">▼</button>
       </th>

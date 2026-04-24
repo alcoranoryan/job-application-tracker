@@ -1,5 +1,9 @@
 const user = JSON.parse(localStorage.getItem("user"));
 
+if (user.role === "admin") {
+  document.getElementById("userColumn").style.display = "table-cell";
+}
+
 if (!user) {
   //window.location.href = "/";
   //window.location.replace("/");
@@ -13,6 +17,7 @@ let jobs = [];
 let currentPage = 1;
 let rowsPerPage = 10;
 let deleteId = null;
+let selectedUsers = [];
 
 const API_BASE = "http://localhost:3000"; //Define a single base URL for your backend API
 
@@ -53,11 +58,17 @@ let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
 
 // Add link in filters (optional but safe)
-let activeFilters = { company: [], role: [], status: [], deadline: [] };
-
+//let activeFilters = { username: [], company: [], role: [], status: [], deadline: [] };
+let activeFilters = {
+  username: [],
+  company: [],
+  role: [],
+  status: [],
+  deadline: []
+};
 // ---------------- API CALLS ----------------
 
-async function fetchJobs() {
+/*async function fetchJobs() {
   const user = JSON.parse(localStorage.getItem("user"));
 
   if (!user) {
@@ -71,9 +82,36 @@ async function fetchJobs() {
   );
 
   jobs = await res.json();
+  populateUserFilter();
+  renderJobs(search.value);
+}*/
+async function fetchJobs() {
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  if (!user) {
+    alert("You are not logged in!");
+    window.location.replace("/");
+    return;
+  }
+
+  const res = await fetch(
+    `${API_BASE}/jobs?user_id=${user.id}&role=${user.role}`
+  );
+
+  jobs = await res.json();
+
+  //Reset filters to prevent empty table on refresh
+  activeFilters = {
+    username: [],
+    company: [],
+    role: [],
+    status: [],
+    deadline: []
+  };
+
+  //Render table properly
   renderJobs(search.value);
 }
-
 async function addJob(job) {
   await fetch("http://localhost:3000/jobs", {
     method: "POST",
@@ -121,12 +159,21 @@ function renderJobs(filter = "") {
   job.status.toLowerCase().startsWith(filter.toLowerCase())
 );
 
-  Object.keys(activeFilters).forEach(key => {
-    if (activeFilters[key].length > 0) {
-      filteredJobs = filteredJobs.filter(job => activeFilters[key].includes(job[key]));
-    }
-  });
+/*if (selectedUserFilter) {
+  filteredJobs = filteredJobs.filter(
+    job => job.username === selectedUserFilter
+  );
+}*/
 
+ Object.keys(activeFilters).forEach(key => {
+  if (activeFilters[key] && activeFilters[key].length > 0) {
+    filteredJobs = filteredJobs.filter(job =>
+      activeFilters[key].includes(job[key])
+    );
+  }
+});
+
+//Sorting
   if (sortConfig.key) {
     filteredJobs.sort((a, b) => {
       let valA = a[sortConfig.key];
@@ -176,7 +223,7 @@ function renderJobs(filter = "") {
     }
   }
 
-  jobList.innerHTML += `
+  /*jobList.innerHTML += `
     <tr>
       <td>${job.company}</td>
       <td>${job.role}</td>
@@ -189,6 +236,23 @@ function renderJobs(filter = "") {
         <button onclick="deleteJob(${job.id})">Delete</button>
       </td>
     </tr>
+  `;*/
+  const user = JSON.parse(localStorage.getItem("user"));
+
+  jobList.innerHTML += `
+  <tr>
+    ${user.role === "admin" ? `<td>${job.username || "Unknown"}</td>` : ""}
+    <td>${job.company}</td>
+    <td>${job.role}</td>
+    <td>${job.status}</td>
+    <td>${job.deadline}</td>
+    <td>${linkCell}</td>
+    <td>${resumeCell}</td>
+    <td>
+      <button onclick="editJob(${job.id})">Edit</button>
+      <button onclick="deleteJob(${job.id})">Delete</button>
+    </td>
+  </tr>
   `;
 });
 

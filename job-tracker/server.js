@@ -161,7 +161,7 @@ app.post("/login", (req, res) => {
 });
 
 // GET
-app.get("/jobs", (req, res) => {
+/*app.get("/jobs", (req, res) => {
   const userId = req.query.user_id;
   const role = req.query.role;
 
@@ -172,6 +172,31 @@ app.get("/jobs", (req, res) => {
     });
   } else {
     db.all("SELECT * FROM jobs WHERE user_id = ?", [userId], (err, rows) => {
+      if (err) return res.status(500).json(err);
+      res.json(rows);
+    });
+  }
+});*/
+app.get("/jobs", (req, res) => {
+  const userId = req.query.user_id;
+  const role = req.query.role;
+
+  if (role === "admin") {
+    db.all(`
+      SELECT jobs.*, users.username 
+      FROM jobs 
+      LEFT JOIN users ON jobs.user_id = users.id
+    `, [], (err, rows) => {
+      if (err) return res.status(500).json(err);
+      res.json(rows);
+    });
+  } else {
+    db.all(`
+      SELECT jobs.*, users.username 
+      FROM jobs 
+      LEFT JOIN users ON jobs.user_id = users.id
+      WHERE jobs.user_id = ?
+    `, [userId], (err, rows) => {
       if (err) return res.status(500).json(err);
       res.json(rows);
     });
