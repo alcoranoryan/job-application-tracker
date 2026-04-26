@@ -536,7 +536,23 @@ search.addEventListener("input", () => {
     suggestionsBox.style.display = "none";
   }
 });
+//clear filter button
+document.getElementById("clearFiltersBtn").addEventListener("click", () => {
+  // Reset all filters
+  activeFilters = {
+    username: [],
+    company: [],
+    role: [],
+    status: [],
+    deadline: []
+  };
 
+  // Optional: clear search too
+  search.value = "";
+
+  // Re-render table
+  renderJobs("");
+});
 //logout
 document.getElementById("logoutBtn").addEventListener("click", () => {
   const confirmLogout = confirm("Are you sure you want to logout?");
