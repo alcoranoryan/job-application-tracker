@@ -111,6 +111,7 @@ async function fetchJobs() {
 
   //Render table properly
   renderJobs(search.value);
+  updateClearFiltersButton();
 }
 async function addJob(job) {
   await fetch("http://localhost:3000/jobs", {
@@ -471,6 +472,7 @@ function applyFilter(key) {
 
   menu.style.display = "none";
   renderJobs(search.value);
+
 }
 
 function clearFilter(key) {
@@ -480,6 +482,7 @@ function clearFilter(key) {
   checkboxes.forEach(cb => cb.checked = false);
   menu.style.display = "none";
   renderJobs(search.value);
+  updateClearFiltersButton();
 }
 
 function toggleSelectAll(key) {
@@ -536,6 +539,22 @@ search.addEventListener("input", () => {
     suggestionsBox.style.display = "none";
   }
 });
+
+/*search.addEventListener("input", () => {
+  renderJobs(search.value);
+  updateClearFiltersButton();
+});*/
+document.addEventListener("DOMContentLoaded", () => {
+  const search = document.getElementById("search");
+
+  if (search) {
+    search.addEventListener("input", () => {
+      renderJobs(search.value);
+      updateClearFiltersButton();
+    });
+  }
+});
+
 //clear filter button
 document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   // Reset all filters
@@ -549,10 +568,29 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
 
   // Optional: clear search too
   search.value = "";
-
+// reset UI
+  document.querySelectorAll(".filter-dropdown input[type='checkbox']")
+    .forEach(cb => cb.checked = false);
   // Re-render table
-  renderJobs("");
+  renderJobs(search.value);
+  updateClearFiltersButton();
+  //renderJobs("");
 });
+
+
+function updateClearFiltersButton() {
+  const hasColumnFilters = Object.values(activeFilters).some(arr => arr.length > 0);
+  const hasSearch = search.value.trim() !== "";
+
+  const clearBtn = document.getElementById("clearFiltersBtn");
+
+  if (hasColumnFilters || hasSearch) {
+    clearBtn.disabled = false;
+  } else {
+    clearBtn.disabled = true;
+  }
+}
+
 //logout
 document.getElementById("logoutBtn").addEventListener("click", () => {
   const confirmLogout = confirm("Are you sure you want to logout?");
