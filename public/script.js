@@ -472,7 +472,7 @@ function applyFilter(key) {
 
   menu.style.display = "none";
   renderJobs(search.value);
-
+  updateClearFiltersButton();
 }
 
 function clearFilter(key) {
@@ -579,16 +579,11 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
 
 
 function updateClearFiltersButton() {
-  const hasColumnFilters = Object.values(activeFilters).some(arr => arr.length > 0);
-  const hasSearch = search.value.trim() !== "";
-
   const clearBtn = document.getElementById("clearFiltersBtn");
 
-  if (hasColumnFilters || hasSearch) {
-    clearBtn.disabled = false;
-  } else {
-    clearBtn.disabled = true;
-  }
+  const hasFilters = Object.values(activeFilters).some(arr => arr.length > 0);
+
+  clearBtn.disabled = !hasFilters;
 }
 
 //logout
