@@ -261,3 +261,8 @@ td a:hover {
 .table-btn.view:hover {
   background-color: #77877A;
 }
+
+#clearFiltersBtn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -540,10 +540,6 @@ search.addEventListener("input", () => {
   }
 });
 
-/*search.addEventListener("input", () => {
-  renderJobs(search.value);
-  updateClearFiltersButton();
-});*/
 document.addEventListener("DOMContentLoaded", () => {
   const search = document.getElementById("search");
 
