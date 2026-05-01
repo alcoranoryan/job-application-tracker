@@ -57,8 +57,7 @@ window.addEventListener("DOMContentLoaded", () => {
 let editIndex = null;
 let sortConfig = { key: null, direction: "asc" };
 
-// Add link in filters (optional but safe)
-//let activeFilters = { username: [], company: [], role: [], status: [], deadline: [] };
+// Add link in filters 
 let activeFilters = {
   username: [],
   company: [],
@@ -68,23 +67,6 @@ let activeFilters = {
 };
 // ---------------- API CALLS ----------------
 
-/*async function fetchJobs() {
-  const user = JSON.parse(localStorage.getItem("user"));
-
-  if (!user) {
-    alert("You are not logged in!");
-    window.location.href = "/";
-    return;
-  }
-
-  const res = await fetch(
-    `${API_BASE}/jobs?user_id=${user.id}&role=${user.role}`
-  );
-
-  jobs = await res.json();
-  populateUserFilter();
-  renderJobs(search.value);
-}*/
 async function fetchJobs() {
   const user = JSON.parse(localStorage.getItem("user"));
 
@@ -160,11 +142,6 @@ function renderJobs(filter = "") {
   job.status.toLowerCase().startsWith(filter.toLowerCase())
 );
 
-/*if (selectedUserFilter) {
-  filteredJobs = filteredJobs.filter(
-    job => job.username === selectedUserFilter
-  );
-}*/
 
  Object.keys(activeFilters).forEach(key => {
   if (activeFilters[key] && activeFilters[key].length > 0) {
@@ -224,20 +201,6 @@ function renderJobs(filter = "") {
     }
   }
 
-  /*jobList.innerHTML += `
-    <tr>
-      <td>${job.company}</td>
-      <td>${job.role}</td>
-      <td>${job.status}</td>
-      <td>${job.deadline}</td>
-      <td>${linkCell}</td>
-      <td>${resumeCell}</td>
-      <td>
-        <button onclick="editJob(${job.id})">Edit</button>
-        <button onclick="deleteJob(${job.id})">Delete</button>
-      </td>
-    </tr>
-  `;*/
   const user = JSON.parse(localStorage.getItem("user"));
 
   jobList.innerHTML += `
@@ -382,8 +345,6 @@ function editJob(id) {
   statusInput.value = job.status;
   deadlineInput.value = job.deadline;
   linkInput.value = job.link || "";
-  //resumeInput.value = job.resume;
-  // Preserve resume path (store it in editIndexJob)
   editIndex = id;
   editIndexJob = job; // keep reference to the job being edited
 
@@ -562,7 +523,7 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
     deadline: []
   };
 
-  // Optional: clear search too
+//clear search too
   search.value = "";
 // reset UI
   document.querySelectorAll(".filter-dropdown input[type='checkbox']")
@@ -570,7 +531,6 @@ document.getElementById("clearFiltersBtn").addEventListener("click", () => {
   // Re-render table
   renderJobs(search.value);
   updateClearFiltersButton();
-  //renderJobs("");
 });
 
 
@@ -589,7 +549,6 @@ document.getElementById("logoutBtn").addEventListener("click", () => {
   if (confirmLogout) {
     localStorage.removeItem("user"); // clear session
     //Stop everything and redirect cleanly
-    //window.location.replace("/");
     window.location.replace("/SignUp_LogIn_Form.html");
   }
 });
